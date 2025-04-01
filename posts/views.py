@@ -42,7 +42,7 @@ def comment_create(request, post_id):
         comment.post_id = post_id # 이 댓글이 어느 게시글에 달리는지 표시해주는 정보
         comment.save()
         return redirect('posts:index') 
-    
+@login_required    
 def like(request, post_id):
     user = request.user # 현재 로그인한 사람
     post = Post.objects.get(id = post_id)
@@ -58,3 +58,16 @@ def like(request, post_id):
         post.like_users.add(user) # user 추가
         
     return redirect('posts:index')
+
+def feed(request):
+    followings = request.user.followings.all()
+    
+    posts = Post.objects.filter(user__in=followings) # 내가 팔로우 하는 사람들이 작성한 게시물들 
+    form = CommentForm()
+    
+    context = {
+        'posts':posts,
+        'form':form,
+    }
+    
+    return render(request, 'index.html', context)
