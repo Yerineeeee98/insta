@@ -1,3 +1,6 @@
+{% load django_bootstrap5 %}
+
+
 <div class="card my-3 col-12 col-md-6 col-xl-4 "> <!--col-12 : 12칸 col-md-6 :중간사이즈 6칸, col-xl-4: xl일때 4칸-->
     <div class="card-header">
       <img class ="rounded-circle" src="{{post.user.profile_image.url}}" alt="" width="30px">
@@ -10,4 +13,20 @@
       <p class="card-text">{{post.created_at|timesince}}</p>
       <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
     </div>
+    <div class="card-footer">
+      <!-- 로그인한 사람만 댓글다는 창을 볼 수 있게 if문으로 처리 -->
+      {% if user.is_authenticated %}
+      <form action="{% url 'posts:comment_create' post.id %}" method = "POST">
+        {% csrf_token %}
+        <div class="row align-items-center">
+          <div class="col-9">
+          {% bootstrap_form form show_label=False wrapper_class='' %}
+        </div>
+        <div class="col-2"> 
+          <input type="submit" value="등록" class = "btn btn-primary">
+        </div>
+      </div>
+    </form>      
+    {% endif %}
+  </div>
 </div>
