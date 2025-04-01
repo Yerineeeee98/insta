@@ -39,7 +39,22 @@ def comment_create(request, post_id):
         comment = form.save(commit=False)
         comment.user = request.user # 현재 로그인한 사람
         
-        comment.post_id = post_id # id값만 찾아서 게시글몇번인지 추가
+        comment.post_id = post_id # 이 댓글이 어느 게시글에 달리는지 표시해주는 정보
         comment.save()
         return redirect('posts:index') 
     
+def like(request, post_id):
+    user = request.user # 현재 로그인한 사람
+    post = Post.objects.get(id = post_id)
+    
+    # if post in user.like_posts.all(): # 유저가 좋아요 누른 게시물에 포스터가 있나요 모델에서 가져옴 
+    # 밑에 코드와 똑같은 기능을 가짐     
+    
+    if user in post.like_users.all(): # 이 게시물에 좋아요 버튼 누른 사람들의 목록에 그 사람이 있나
+        # user.like_posts.remove(post)
+        post.like_users.remove(user) # 좋아요를 이미 눌렀다면 지워주기
+    else:
+        # user.like_posts.add(post)
+        post.like_users.add(user) # user 추가
+        
+    return redirect('posts:index')
